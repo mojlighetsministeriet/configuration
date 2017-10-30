@@ -1,0 +1,73 @@
+version: "3.3"
+
+networks:
+  proxy:
+    external: true
+
+secrets:
+  private-key:
+    file: ./secrets/private-key
+  smtp-password:
+    file: ./secrets/smtp-password
+  database-connection:
+    file: ./secrets/database-connection
+
+services:
+
+  groups:
+    image: mojlighetsministeriet/groups:master
+    secrets:
+      - database-connection
+    environment:
+      IDENTITY_PROVIDER_URL: http://identity-provider
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/groups
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
+
+  identity-provider:
+    image: mojlighetsministeriet/identity-provider:master
+    secrets:
+      - private-key
+      - smtp-password
+      - database-connection
+    environment:
+      SMTP_HOST: smtp.myemailprovider.com
+      SMTP_PORT: 587
+      SMTP_EMAIL: email@mydomain.com
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/identity-provider
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
