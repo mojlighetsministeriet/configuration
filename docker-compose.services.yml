@@ -34,7 +34,7 @@ services:
         max_attempts: 3
         window: 120s
       labels:
-        - traefik.frontend.rule=PathPrefixStrip:/groups
+        - traefik.frontend.rule=PathPrefixStrip:/api/groups
         - traefik.docker.network=proxy
         - traefik.port=80
         - traefik.enable=true
@@ -65,7 +65,7 @@ services:
         max_attempts: 3
         window: 120s
       labels:
-        - traefik.frontend.rule=PathPrefixStrip:/identity-provider
+        - traefik.frontend.rule=PathPrefixStrip:/api/identity-provider
         - traefik.docker.network=proxy
         - traefik.port=80
         - traefik.enable=true
