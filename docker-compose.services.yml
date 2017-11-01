@@ -15,7 +15,7 @@ secrets:
 services:
 
   gui:
-    image: mojlighetsministeriet/gui:master
+    image: mojlighetsministeriet/gui
     deploy:
       replicas: 2
       update_config:
@@ -38,7 +38,7 @@ services:
       - proxy
 
   groups:
-    image: mojlighetsministeriet/groups:master
+    image: mojlighetsministeriet/groups
     secrets:
       - database-connection
     environment:
@@ -65,7 +65,7 @@ services:
       - proxy
 
   identity-provider:
-    image: mojlighetsministeriet/identity-provider:master
+    image: mojlighetsministeriet/identity-provider
     secrets:
       - private-key
       - smtp-password
