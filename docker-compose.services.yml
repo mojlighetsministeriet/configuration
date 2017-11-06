@@ -36,6 +36,8 @@ services:
         - traefik.enable=true
     networks:
       - proxy
+    volumes:
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
 
   groups:
     image: mojlighetsministeriet/groups
@@ -63,6 +65,8 @@ services:
         - traefik.enable=true
     networks:
       - proxy
+    volumes:
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
 
   identity-provider:
     image: mojlighetsministeriet/identity-provider
@@ -94,3 +98,5 @@ services:
         - traefik.enable=true
     networks:
       - proxy
+    volumes:
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
