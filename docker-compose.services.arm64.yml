@@ -1,0 +1,148 @@
+version: "3.3"
+
+networks:
+  proxy:
+    external: true
+
+secrets:
+  private-key:
+    file: ./secrets/private-key
+  smtp-password:
+    file: ./secrets/smtp-password
+  database-connection:
+    file: ./secrets/database-connection
+
+services:
+
+  gui:
+    image: mojlighetsministeriet/gui-arm64
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
+
+  random-background:
+    image: mojlighetsministeriet/random-background-arm64
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/api/random-background
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
+    volumes:
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
+
+  groups:
+    image: mojlighetsministeriet/groups-arm64
+    secrets:
+      - database-connection
+    environment:
+      IDENTITY_PROVIDER_URL: http://identity-provider
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/api/groups
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
+
+  identity-provider:
+    image: mojlighetsministeriet/identity-provider-arm64
+    secrets:
+      - private-key
+      - database-connection
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/api/identity-provider
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
+    volumes:
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
+
+  email:
+    image: mojlighetsministeriet/email-arm64
+    secrets:
+      - smtp-password
+    environment:
+      SMTP_HOST: smtp.example.com
+      SMTP_PORT: 587
+      SMTP_EMAIL: info@example.com
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
+    volumes:
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt

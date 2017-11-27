@@ -1,0 +1,27 @@
+version: "3.3"
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  database:
+
+services:
+  mariadb:
+    image: mariadb:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - database:/var/lib/mysql
+    environment:
+      # TODO: figure out how this can be moved to secrets instead
+      MYSQL_ROOT_PASSWORD: eUYP0mjoTt8YqCJBxa0bcrfN1miLzA
+      MYSQL_DATABASE: momin
+      MYSQL_USER: momin
+      MYSQL_PASSWORD: eUYP0mjoTt8YqCJBxa0bcrfN1miLzA
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - proxy
