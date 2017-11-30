@@ -36,6 +36,29 @@ services:
         - traefik.enable=true
     networks:
       - proxy
+
+  random-background:
+    image: mojlighetsministeriet/random-background
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/api/random-background
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
     volumes:
       - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
 
@@ -65,15 +88,39 @@ services:
         - traefik.enable=true
     networks:
       - proxy
-    volumes:
-      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
 
   identity-provider:
     image: mojlighetsministeriet/identity-provider
     secrets:
       - private-key
-      - smtp-password
       - database-connection
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/api/identity-provider
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
+    volumes:
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt
+
+  email:
+    image: mojlighetsministeriet/email
+    secrets:
+      - smtp-password
     environment:
       SMTP_HOST: smtp.myemailprovider.com
       SMTP_PORT: 587
@@ -92,7 +139,6 @@ services:
         max_attempts: 3
         window: 120s
       labels:
-        - traefik.frontend.rule=PathPrefixStrip:/api/identity-provider
         - traefik.docker.network=proxy
         - traefik.port=80
         - traefik.enable=true
