@@ -9,17 +9,17 @@ volumes:
 
 services:
   mariadb:
-    image: mariadb:latest
+    image: jsurf/rpi-mariadb
     ports:
       - 3306:3306
     volumes:
       - database:/var/lib/mysql
     environment:
       # TODO: figure out how this can be moved to secrets instead
-      MYSQL_ROOT_PASSWORD: eUYP0mjoTt8YqCJBxa0bcrfN1miLzA
+      MYSQL_ROOT_PASSWORD: yourrootpassword
       MYSQL_DATABASE: momin
       MYSQL_USER: momin
-      MYSQL_PASSWORD: eUYP0mjoTt8YqCJBxa0bcrfN1miLzA
+      MYSQL_PASSWORD: yourrootpassword
     deploy:
       placement:
         constraints: [node.role == manager]

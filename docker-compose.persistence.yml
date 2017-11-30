@@ -17,9 +17,9 @@ services:
     environment:
       # TODO: figure out how this can be moved to secrets instead
       MYSQL_ROOT_PASSWORD: yourrootpassword
-      MYSQL_DATABASE: identity-provider
-      MYSQL_USER: identity-provider
-      MYSQL_PASSWORD: youruserpassword
+      MYSQL_DATABASE: momin
+      MYSQL_USER: momin
+      MYSQL_PASSWORD: yourrootpassword
     deploy:
       placement:
         constraints: [node.role == manager]
