@@ -2,6 +2,7 @@
 set -e
 
 images=(gui identity-provider groups email random-background)
+# TODO: fixure out how to run letsencrypt with in arm64 emulation
 
 for image in ${images[@]}; do
   cd ..
