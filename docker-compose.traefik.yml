@@ -13,16 +13,16 @@ configs:
 
 secrets:
   traefik-cert:
-    file: ./tls/cert.pem
+    file: ./tls/fullchain.pem
   traefik-key:
-    file: ./tls/key.pem
+    file: ./tls/privkey.pem
 
 services:
 
   traefik:
     image: traefik:1.4
     deploy:
-      replicas: 2
+      replicas: 3
       placement:
         constraints:
         - node.role == manager
@@ -48,21 +48,57 @@ services:
         target: /etc/traefik/traefik.toml
         mode: 444
     secrets:
-      - source: traefik-cert
+      - source: tls-cert-internt.mojlighetsministeriet.se
         target: cert.pem
         uid: "0"
         mode: 400
-      - source: traefik-key
+      - source: tls-key-internt.mojlighetsministeriet.se
         target: key.pem
         uid: "0"
         mode: 400
+
+  letsencrypt:
+    image: mojlighetsministeriet/letsencrypt
+    environment:
+      DOMAINS: internt.mojlighetsministeriet.se
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/.well-known
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
 
   nginx_redirect:
     image: nginx:1.13
     networks:
       - proxy
     deploy:
-      replicas: 2
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
       labels:
         - traefik.frontend.entryPoints=http
         - traefik.frontend.rule=PathPrefix:/
