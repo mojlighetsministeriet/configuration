@@ -111,7 +111,7 @@ services:
         mode: 444
 
   visualizer:
-    image: dockersamples/visualizer:stable
+    image: adomenech73/docker-swarm-visualizer-aarch64
     stop_grace_period: 1m30s
     ports:
       - 8081:8080
