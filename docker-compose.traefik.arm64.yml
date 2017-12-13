@@ -24,6 +24,9 @@ services:
     deploy:
       replicas: 3
       placement:
+        platforms:
+          architecture: arm64
+          os: linux
         constraints:
         - node.role == manager
     volumes:
@@ -57,36 +60,44 @@ services:
         uid: "0"
         mode: 400
 
-  letsencrypt:
-    image: mojlighetsministeriet/letsencrypt-arm64
-    environment:
-      DOMAINS: internt.mojlighetsministeriet.se
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: continue
-        monitor: 60s
-        max_failure_ratio: 0.3
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-      labels:
-        - traefik.frontend.rule=PathPrefixStrip:/.well-known
-        - traefik.docker.network=proxy
-        - traefik.port=80
-        - traefik.enable=true
-    networks:
-      - proxy
+  # letsencrypt:
+  #   image: mojlighetsministeriet/letsencrypt-arm64
+  #   environment:
+  #     DOMAINS: internt.mojlighetsministeriet.se
+  #   deploy:
+  #     placement:
+  #       platforms:
+  #         architecture: arm64
+  #         os: linux
+  #     replicas: 1
+  #     update_config:
+  #       parallelism: 1
+  #       delay: 10s
+  #       failure_action: continue
+  #       monitor: 60s
+  #       max_failure_ratio: 0.3
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 5s
+  #       max_attempts: 3
+  #       window: 120s
+  #     labels:
+  #       - traefik.frontend.rule=PathPrefixStrip:/.well-known
+  #       - traefik.docker.network=proxy
+  #       - traefik.port=80
+  #       - traefik.enable=true
+  #   networks:
+  #     - proxy
 
   nginx_redirect:
     image: nginx:1.13
     networks:
       - proxy
     deploy:
+      placement:
+        platforms:
+          architecture: arm64
+          os: linux
       replicas: 3
       update_config:
         parallelism: 1
@@ -119,6 +130,9 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     deploy:
       placement:
+        platforms:
+          architecture: arm64
+          os: linux
         constraints: [node.role == manager]
     networks:
       - proxy

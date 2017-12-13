@@ -17,6 +17,10 @@ services:
   gui:
     image: mojlighetsministeriet/gui-arm64
     deploy:
+      placement:
+        platforms:
+          architecture: arm64
+          os: linux
       replicas: 2
       update_config:
         parallelism: 1
@@ -40,6 +44,10 @@ services:
   random-background:
     image: mojlighetsministeriet/random-background-arm64
     deploy:
+      placement:
+        platforms:
+          architecture: arm64
+          os: linux
       replicas: 2
       update_config:
         parallelism: 1
@@ -67,6 +75,10 @@ services:
     environment:
       IDENTITY_PROVIDER_URL: http://identity-provider
     deploy:
+      placement:
+        platforms:
+          architecture: arm64
+          os: linux
       replicas: 2
       update_config:
         parallelism: 1
@@ -93,6 +105,10 @@ services:
       - private-key
       - database-connection
     deploy:
+      placement:
+        platforms:
+          architecture: arm64
+          os: linux
       replicas: 2
       update_config:
         parallelism: 1
@@ -122,6 +138,10 @@ services:
       SMTP_PORT: 587
       SMTP_EMAIL: info@example.com
     deploy:
+      placement:
+        platforms:
+          architecture: arm64
+          os: linux
       replicas: 2
       update_config:
         parallelism: 1

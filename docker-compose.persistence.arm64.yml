@@ -22,6 +22,9 @@ services:
       MYSQL_PASSWORD: yourrootpassword
     deploy:
       placement:
+        platforms:
+          architecture: arm64
+          os: linux
         constraints: [node.role == manager]
     networks:
       - proxy
