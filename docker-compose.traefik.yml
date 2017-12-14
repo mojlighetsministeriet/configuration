@@ -57,30 +57,30 @@ services:
         uid: "0"
         mode: 400
 
-  letsencrypt:
-    image: mojlighetsministeriet/letsencrypt
-    environment:
-      DOMAINS: internt.mojlighetsministeriet.se
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: continue
-        monitor: 60s
-        max_failure_ratio: 0.3
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-      labels:
-        - traefik.frontend.rule=PathPrefixStrip:/.well-known
-        - traefik.docker.network=proxy
-        - traefik.port=80
-        - traefik.enable=true
-    networks:
-      - proxy
+  # letsencrypt:
+  #   image: mojlighetsministeriet/letsencrypt
+  #   environment:
+  #     DOMAINS: internt.mojlighetsministeriet.se
+  #   deploy:
+  #     replicas: 1
+  #     update_config:
+  #       parallelism: 1
+  #       delay: 10s
+  #       failure_action: continue
+  #       monitor: 60s
+  #       max_failure_ratio: 0.3
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 5s
+  #       max_attempts: 3
+  #       window: 120s
+  #     labels:
+  #       - traefik.frontend.rule=PathPrefixStrip:/.well-known
+  #       - traefik.docker.network=proxy
+  #       - traefik.port=80
+  #       - traefik.enable=true
+  #   networks:
+  #     - proxy
 
   nginx_redirect:
     image: nginx:1.13
