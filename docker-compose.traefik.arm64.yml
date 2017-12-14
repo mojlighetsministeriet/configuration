@@ -24,9 +24,6 @@ services:
     deploy:
       replicas: 3
       placement:
-        platforms:
-          architecture: arm64
-          os: linux
         constraints:
         - node.role == manager
     volumes:
@@ -65,10 +62,6 @@ services:
   #   environment:
   #     DOMAINS: internt.mojlighetsministeriet.se
   #   deploy:
-  #     placement:
-  #       platforms:
-  #         architecture: arm64
-  #         os: linux
   #     replicas: 1
   #     update_config:
   #       parallelism: 1
@@ -94,10 +87,6 @@ services:
     networks:
       - proxy
     deploy:
-      placement:
-        platforms:
-          architecture: arm64
-          os: linux
       replicas: 3
       update_config:
         parallelism: 1
@@ -130,9 +119,6 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     deploy:
       placement:
-        platforms:
-          architecture: arm64
-          os: linux
         constraints: [node.role == manager]
     networks:
       - proxy
