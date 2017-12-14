@@ -122,3 +122,30 @@ services:
         constraints: [node.role == manager]
     networks:
       - proxy
+
+  swarm-info:
+    image: mojlighetsministeriet/swarm-info
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: continue
+        monitor: 60s
+        max_failure_ratio: 0.3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        - traefik.frontend.rule=PathPrefixStrip:/swarm-info
+        - traefik.docker.network=proxy
+        - traefik.port=80
+        - traefik.enable=true
+    networks:
+      - proxy
