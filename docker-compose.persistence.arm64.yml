@@ -10,8 +10,6 @@ volumes:
 services:
   mariadb:
     image: jsurf/rpi-mariadb
-    ports:
-      - 3306:3306
     volumes:
       - database:/var/lib/mysql
     environment:
@@ -23,5 +21,9 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
+      labels:
+        - traefik.docker.network=proxy
+        - traefik.port=3306
+        - traefik.enable=true
     networks:
       - proxy
