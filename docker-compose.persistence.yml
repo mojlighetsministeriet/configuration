@@ -20,7 +20,8 @@ services:
       MYSQL_PASSWORD: yourrootpassword
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints:
+          - node.labels.persistence == mysql
       labels:
         - traefik.docker.network=proxy
         - traefik.port=3306

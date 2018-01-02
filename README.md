@@ -2,6 +2,15 @@
 
 This is a sample configuration to simplify deployment of Möjlighetsministeriets administration platform.
 
+## Swarm setup
+
+It's totally possible to run the entire system on one machine, but for production several machines are suggested. In Möjlighetsministeriet we run this system on 8 ~$20 machines called Orange Pi PC2 (basically Raspberry Pi 3 a clone).
+
+1. (If using more than one machine) Ensure that all machines have docker-ce and static IPs
+2. On the first machine run $ docker swarm init
+3. SSH into any other machine and run the join command that you where prompted in the previous step
+4. Mark the node that should have storage (like databases) with $ docker node update *mynodename* --label-add persistence=mysql
+
 ## Run installation
 
 1. Update docker-compose.persistence.yml file under mariadb.environment with database credentials
