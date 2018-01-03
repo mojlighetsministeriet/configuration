@@ -9,11 +9,10 @@ It's totally possible to run the entire system on one machine, but for productio
 1. (If using more than one machine) Ensure that all machines have docker-ce and static IPs
 2. On the first machine run $ docker swarm init
 3. SSH into any other machine and run the join command that you where prompted in the previous step
-4. Mark the node that should have storage (like databases) with $ docker node update *mynodename* --label-add persistence=mysql
 
 ## Run installation
 
-1. Update docker-compose.persistence.yml file under mariadb.environment with database credentials
+1. Update docker-compose.persistence.yml file under mariadb.environment with database credentials and change mariadb placements constraints from "node.hostname == mydatabasehost" to node.hostname == one of the machines hostname (this since you need to make sure that it runs on the same machine as where the database files are stored).
 2. Update docker-compose.services.yml file under identity-provider.environment with email settings
 3. Update ./secrets/database-connection to match MYSQL_USER/MYSQL_PASSWORD/MYSQL_DATABASE from docker-compose.persistence.yml
 5. Update ./secrets/smtp-password to match with the email account set in docker-compose.services.yml identity-provider.environment

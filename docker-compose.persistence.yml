@@ -21,7 +21,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.persistence == mysql
+          - node.hostname == mydatabasehost
       labels:
         - traefik.docker.network=proxy
         - traefik.port=3306
