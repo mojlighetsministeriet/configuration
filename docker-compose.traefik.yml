@@ -110,19 +110,6 @@ services:
         target: /etc/nginx/conf.d/default.conf
         mode: 444
 
-  visualizer:
-    image: dockersamples/visualizer:stable
-    stop_grace_period: 1m30s
-    ports:
-      - 8081:8080
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-    networks:
-      - proxy
-
   swarm-info:
     image: mojlighetsministeriet/swarm-info
     volumes:
